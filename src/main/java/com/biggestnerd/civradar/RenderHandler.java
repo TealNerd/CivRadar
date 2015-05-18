@@ -207,11 +207,7 @@ public class RenderHandler extends Gui {
 	
 	private void renderPlayerHeadIcon(int x, int y, EntityOtherPlayerMP player) {
 		NetworkPlayerInfo info = mc.thePlayer.sendQueue.getPlayerInfo(player.getUniqueID());
-		if(info != null) {
-			mc.getTextureManager().bindTexture(info.getLocationSkin());
-		} else {
-			mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
-		}
+		mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, config.getRadarOpacity() + 0.5F);
 		GL11.glEnable(3042);
 		GL11.glPushMatrix();
