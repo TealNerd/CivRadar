@@ -1,0 +1,16 @@
+[
+{
+  "modid": "civradar",
+  "name": "CivRadar",
+  "description": "Radar mod for Civcraft",
+  "version": "beta-1.0.0",
+  "mcversion": "1.8",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["TealNerd"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
