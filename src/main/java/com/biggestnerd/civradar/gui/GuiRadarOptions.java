@@ -40,7 +40,7 @@ public class GuiRadarOptions extends GuiScreen {
 			mc.displayGuiScreen(new GuiRepositionRadar(this));
 		}
 		if(id == 1) {
-			mc.displayGuiScreen(new GuiEntityList(this));
+			mc.displayGuiScreen(new GuiEntitySettings(this));
 		}
 		if(id == 4) {
 			mc.displayGuiScreen(new GuiEditRadarColor(this));

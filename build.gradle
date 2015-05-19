@@ -17,12 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "beta-1.0.0"
+version = "beta-1.0.6"
 group= "com.biggestnerd.civradar" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "[1.8]CivRadar"
 
 minecraft {
-    version = "1.8-11.14.1.1325"
+    version = "1.8-11.14.1.1404"
     runDir = "eclipse"
     
     // the mappings can be changed at any time, and must be in the following format.

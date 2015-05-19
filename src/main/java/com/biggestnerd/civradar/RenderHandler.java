@@ -1,16 +1,13 @@
 package com.biggestnerd.civradar;
 
 import java.awt.Color;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
@@ -31,12 +28,12 @@ public class RenderHandler extends Gui {
 	private Config config = CivRadar.instance.getConfig();
 	private Minecraft mc = Minecraft.getMinecraft();
 	private Color radarColor;
-	private ResourceLocation icons = new ResourceLocation("civRadar/icons/horse.png");
 	private double pingDelay = 63.0D;
+	private List entityList;
 	
 	@SubscribeEvent
 	public void renderRadar(RenderGameOverlayEvent event) {
-		if(event.type != RenderGameOverlayEvent.ElementType.EXPERIENCE && !mc.thePlayer.isRiding())
+		if(event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS)
 			return;
 		if(config.isEnabled()) {
 			drawRadar();
@@ -50,6 +47,7 @@ public class RenderHandler extends Gui {
 				pingDelay = 63.0D;
 			}
 			pingDelay -= 1.0D;
+			entityList = mc.theWorld.loadedEntityList;
 		}
 	}
 	
@@ -93,8 +91,8 @@ public class RenderHandler extends Gui {
 			drawCircle(0, 0, 63.0D - pingDelay, radarColor, false);
 		}
 		GL11.glLineWidth(2.0F);
-		GL11.glDisable(3553);
-		GL11.glDisable(2896);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glBegin(1);
 		GL11.glColor4f(radarColor.getRed() / 255.0F, radarColor.getGreen() / 255.0F, radarColor.getBlue() / 255.0F, config.getRadarOpacity() + 0.5F);
 		GL11.glVertex2d(0.0D, -63.0D);
@@ -106,8 +104,8 @@ public class RenderHandler extends Gui {
 		GL11.glVertex2d(-44.5D, 44.5D);
 		GL11.glVertex2d(44.5D, -44.5D);
 		GL11.glEnd();
-		GL11.glDisable(3042);
-		GL11.glEnable(3553);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
 		drawRadarIcons();
 		
@@ -120,7 +118,7 @@ public class RenderHandler extends Gui {
 	
 	private void drawCircle(int x, int y, double radius, Color c, boolean filled) {
 		GL11.glEnable(3042);
-		GL11.glDisable(3553);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(2848);
 		GL11.glBlendFunc(770, 771);
 		GL11.glColor4f(c.getRed() / 255.0F, c.getGreen() / 255.0F, c.getBlue() / 255.0F, filled ? config.getRadarOpacity() : config.getRadarOpacity() + 0.5F);
@@ -132,7 +130,7 @@ public class RenderHandler extends Gui {
 		}
 		GL11.glEnd();
 		GL11.glDisable(2848);
-		GL11.glEnable(3553);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(3042);
 	}
 	
@@ -155,7 +153,10 @@ public class RenderHandler extends Gui {
 	}
 	
 	private void drawRadarIcons() {
-		for(Object o : mc.theWorld.loadedEntityList) {
+		if(entityList == null) {
+			return;
+		}
+		for(Object o : entityList) {
 			Entity e = (Entity) o;
 			int playerPosX = (int) mc.thePlayer.posX;
 			int playerPosZ = (int) mc.thePlayer.posZ;
@@ -163,29 +164,23 @@ public class RenderHandler extends Gui {
 			int entityPosZ = (int) e.posZ;
 			int displayPosX = playerPosX - entityPosX;
 			int displayPosZ = playerPosZ - entityPosZ;
-			if(Math.hypot(displayPosX, displayPosZ) < 130.0D && e != mc.thePlayer) {
+			if(e != mc.thePlayer) {
 				if(e instanceof EntityItem) {
 					EntityItem item = (EntityItem) e;
 					if(config.isRender(EntityItem.class)) {
 						renderItemIcon(displayPosX, displayPosZ, item.getEntityItem());
 					}
-					return;
-				}
-				if(e instanceof EntityOtherPlayerMP) {
+				} else if(e instanceof EntityOtherPlayerMP) {
 					if(config.isRender(EntityPlayer.class)) {
 						EntityOtherPlayerMP eop = (EntityOtherPlayerMP) e;
 						renderPlayerHeadIcon(displayPosX, displayPosZ, eop);
 					}
-					return;
-				}
-				if(e instanceof EntityMinecart) {
+				} else if(e instanceof EntityMinecart) {
 					if(config.isRender(EntityMinecart.class)) {
 						ItemStack cart = new ItemStack(Items.minecart);
 						renderItemIcon(displayPosX, displayPosZ, cart);
 					}
-					return;
-				}
-				if(config.isRender(o.getClass())) {
+				} else if(config.isRender(o.getClass())) {
 					renderIcon(displayPosX, displayPosZ, config.getMob(o.getClass()).getResource());
 				}
 			}
