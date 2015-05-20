@@ -57,6 +57,7 @@ public class Config {
 	private float waypointOpcaity = 0.5F;
 	private boolean renderWaypoints = true;
 	private Color radarColor = new Color(0.0F, 0.5F, 0.5F);
+	private float radarScale = 1.0F;
 	
 	public Config() {
 		mobs = new ArrayList<Entity>(Arrays.asList(new Entity[]{
@@ -115,6 +116,14 @@ public class Config {
 			}
 		}
 		return false;
+	}
+	
+	public void setRadarScale(float radarScale) {
+		this.radarScale = radarScale;
+	}
+	
+	public float getRadarScale() {
+		return radarScale;
 	}
 	
 	public Entity getMob(Class entityClass) {

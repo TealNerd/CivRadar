@@ -30,7 +30,7 @@ public class GuiRepositionRadar extends GuiScreen {
 		this.buttonList.add(new GuiButton(1, this.width / 2 + 1, 90, 100, 20, "Snap top right"));
 		this.buttonList.add(new GuiButton(2, this.width / 2 - 101, 90, 100, 20, "Snap top left"));
 		this.buttonList.add(new GuiButton(3, this.width / 2 - 101, 112, 100, 20, "Snap bottom left"));
-		this.buttonList.add(new GuiButton(4, this.width / 2 + 1, 112, 100, 20, "Snap top left"));
+		this.buttonList.add(new GuiButton(4, this.width / 2 + 1, 112, 100, 20, "Snap bottom right"));
 		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, 134, "Done"));
 	}
 	
@@ -48,19 +48,19 @@ public class GuiRepositionRadar extends GuiScreen {
 			config.setRadarY(0);
 		}
 		if(button.id == 2) {
-			config.setRadarX(-this.width + 130);
+			config.setRadarX(-this.width + (int)(65 * config.getRadarScale()) * 2 + 2);
 			config.setRadarY(0);
 		}
 		if(button.id == 3) {
-			config.setRadarX(-this.width + 130);
-			config.setRadarY(this.height - 150);
+			config.setRadarX(-this.width + (int)(65 * config.getRadarScale()) * 2 + 2);
+			config.setRadarY(this.height - (int)(70 * config.getRadarScale()) * 2);
 		}
 		if(button.id == 4) {
 			config.setRadarX(0);
-			config.setRadarY(this.height - 150);
+			config.setRadarY(this.height - (int)(70 * config.getRadarScale()) * 2);
 		}
 		if(button.id == 5) {
-			mc.displayGuiScreen(null);
+			mc.displayGuiScreen(parentScreen);
 		}
 		CivRadar.instance.saveConfig();
 	}

@@ -16,9 +16,9 @@ public class GuiEditRadarColor extends GuiScreen {
 	private GuiScreen parent;
 	private Minecraft mc;
 	private Config config;
-	private GuiColorSlider redSlider;
-	private GuiColorSlider greenSlider;
-	private GuiColorSlider blueSlider;
+	private GuiSlider redSlider;
+	private GuiSlider greenSlider;
+	private GuiSlider blueSlider;
 	
 	public GuiEditRadarColor(GuiScreen parent) {
 		this.parent = parent;
@@ -29,9 +29,9 @@ public class GuiEditRadarColor extends GuiScreen {
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		this.buttonList.add(redSlider = new GuiColorSlider(0, this.width / 2 - 100, this.height / 4 - 16, 1.0F, "Red", config.getRadarColor().getRed() / 255.0F));
-		this.buttonList.add(greenSlider = new GuiColorSlider(0, this.width / 2 - 100, this.height / 4 + 8, 1.0F, "Green", config.getRadarColor().getGreen() / 255.0F));
-		this.buttonList.add(blueSlider = new GuiColorSlider(0, this.width / 2 - 100, this.height / 4 + 32, 1.0F, "Blue", config.getRadarColor().getBlue() / 255.0F));
+		this.buttonList.add(redSlider = new GuiSlider(0, this.width / 2 - 100, this.height / 4 - 16, 1.0F, 0.0F, "Red", config.getRadarColor().getRed() / 255.0F));
+		this.buttonList.add(greenSlider = new GuiSlider(0, this.width / 2 - 100, this.height / 4 + 8, 1.0F, 0.0F, "Green", config.getRadarColor().getGreen() / 255.0F));
+		this.buttonList.add(blueSlider = new GuiSlider(0, this.width / 2 - 100, this.height / 4 + 32, 1.0F, 0.0F, "Blue", config.getRadarColor().getBlue() / 255.0F));
 		this.buttonList.add(new GuiButton(100, this.width / 2 - 100, this.height / 4 + 56, "Done"));
 	}
 	

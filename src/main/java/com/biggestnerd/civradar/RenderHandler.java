@@ -30,6 +30,7 @@ public class RenderHandler extends Gui {
 	private Color radarColor;
 	private double pingDelay = 63.0D;
 	private List entityList;
+	private float radarScale;
 	
 	@SubscribeEvent
 	public void renderRadar(RenderGameOverlayEvent event) {
@@ -67,15 +68,17 @@ public class RenderHandler extends Gui {
 	
 	private void drawRadar() {
 		radarColor = config.getRadarColor();
+		radarScale = config.getRadarScale();
 		ScaledResolution res = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		int width = res.getScaledWidth();
 		GL11.glPushMatrix();
-		GL11.glTranslatef(width - 65 + (config.getRadarX()), 65 + (config.getRadarY()), 0.0F);
+		GL11.glTranslatef(width - (65 * radarScale) + (config.getRadarX()), (65 * radarScale) + (config.getRadarY()), 0.0F);
 		GL11.glScalef(1.0F, 1.0F, 1.0F);
 		if(config.isRenderCoordinates()) {
 			String coords = "(" + (int) mc.thePlayer.posX + "," + (int) mc.thePlayer.posY + "," + (int) mc.thePlayer.posZ + ")";
-			mc.fontRendererObj.drawStringWithShadow(coords, -(mc.fontRendererObj.getStringWidth(coords) / 2), 65, 14737632);
+			mc.fontRendererObj.drawStringWithShadow(coords, -(mc.fontRendererObj.getStringWidth(coords) / 2), 65 * radarScale, 14737632);
 		}
+		GL11.glScalef(radarScale, radarScale, radarScale);
 		GL11.glRotatef(-mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
 		drawCircle(0, 0, 63.0D, radarColor, true);
 		GL11.glLineWidth(2.0F);
@@ -202,14 +205,19 @@ public class RenderHandler extends Gui {
 	
 	private void renderPlayerHeadIcon(int x, int y, EntityOtherPlayerMP player) {
 		NetworkPlayerInfo info = mc.thePlayer.sendQueue.getPlayerInfo(player.getUniqueID());
-		mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, config.getRadarOpacity() + 0.5F);
 		GL11.glEnable(3042);
 		GL11.glPushMatrix();
 		GL11.glScalef(0.5F, 0.5F, 0.5F);
 		GL11.glTranslatef(x + 1, y + 1, 0.0F);
 		GL11.glRotatef(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
+		//if(info.getLocationSkin() != null) {
+		//	mc.getTextureManager().bindTexture(info.getLocationSkin());
+		//	drawModalRectWithCustomSizedTexture(-8, -8, 8, 8, 16, 16, 16, 16);
+		//} else {
+		mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
 		drawModalRectWithCustomSizedTexture(-8, -8, 0, 0, 16, 16, 16, 16);
+		//}
 		GL11.glTranslatef(-x -1, -y -1, 0.0F);
 		GL11.glScalef(2.0F, 2.0F, 2.0F);
 		GL11.glDisable(2896);
