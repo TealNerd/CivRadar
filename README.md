@@ -1,4 +1,4 @@
-## Snitch-Visualizer (FML 1.8)
+## CivRadar (FML 1.8)
 A radar mod for Civcraft
 
 Compiling from Source
