@@ -7,6 +7,7 @@ Installing and Using CivRadar
 2. Download the [Forge 1.8-11.14.1.1404 Installer](http://adfoc.us/serve/sitelinks/?id=271228&url=http://files.minecraftforge.net/maven/net/minecraftforge/forge/1.8-11.14.1.1404/forge-1.8-11.14.1.1404-installer.jar) or [another version](http://files.minecraftforge.net) (OTHER VERSIONS ARE NOT OFFICIALLY SUPPORTED BUT MAY WORK)
 3. Run the installer and install forge
 4. [Open your .minecraft folder](http://minecraft.gamepedia.com/.minecraft)
+5. Download the [latest CivRadar release](http://github.com/civradar/releases)
 5. if you don't see a folder called 'mods', create one, then put the CivRadar jar in the mods folder
 6. Open the minecraft launcher
 7. Create a new profile and select the version 'release Forge 1.8-11.14.1.1404'
