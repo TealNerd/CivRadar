@@ -5,9 +5,12 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
@@ -22,6 +25,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import org.lwjgl.opengl.GL11;
+
+import com.biggestnerd.civradar.Config.NameLocation;
 
 public class RenderHandler extends Gui {
 
@@ -59,8 +64,8 @@ public class RenderHandler extends Gui {
 		}
 		if(config.isRenderWaypoints()) {
 			for(Waypoint point : CivRadar.instance.getWaypointSave().getWaypoints()) {
-				if(point.getWorldName().equals(mc.theWorld.getWorldInfo().getWorldName()) && point.isEnabled()) {
-					//renderWaypoint(point);
+				if(point.getDimension() == mc.theWorld.provider.getDimensionId() && point.isEnabled()) {
+					renderWaypoint(point, event);
 				}
 			}
 		}
@@ -84,11 +89,6 @@ public class RenderHandler extends Gui {
 		GL11.glLineWidth(2.0F);
 		drawCircle(0, 0, 63.0D, radarColor, false);
 		GL11.glLineWidth(1.0F);
-		/*
-		drawCircle(0, 0, 63.0D, teal, false);
-		drawCircle(0, 0, 43.0D, teal, false);
-		drawCircle(0, 0, 22.0D, teal, false);
-		*/
 		
 		if(pingDelay > 0) {
 			drawCircle(0, 0, 63.0D - pingDelay, radarColor, false);
@@ -176,7 +176,11 @@ public class RenderHandler extends Gui {
 				} else if(e instanceof EntityOtherPlayerMP) {
 					if(config.isRender(EntityPlayer.class)) {
 						EntityOtherPlayerMP eop = (EntityOtherPlayerMP) e;
-						renderPlayerHeadIcon(displayPosX, displayPosZ, eop);
+						try {
+							renderPlayerHeadIcon(displayPosX, displayPosZ, eop);
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
 					}
 				} else if(e instanceof EntityMinecart) {
 					if(config.isRender(EntityMinecart.class)) {
@@ -203,21 +207,15 @@ public class RenderHandler extends Gui {
 		GL11.glPopMatrix();
 	}
 	
-	private void renderPlayerHeadIcon(int x, int y, EntityOtherPlayerMP player) {
-		NetworkPlayerInfo info = mc.thePlayer.sendQueue.getPlayerInfo(player.getUniqueID());
+	private void renderPlayerHeadIcon(int x, int y, EntityOtherPlayerMP player) throws Exception {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, config.getRadarOpacity() + 0.5F);
 		GL11.glEnable(3042);
 		GL11.glPushMatrix();
 		GL11.glScalef(0.5F, 0.5F, 0.5F);
 		GL11.glTranslatef(x + 1, y + 1, 0.0F);
 		GL11.glRotatef(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
-		//if(info.getLocationSkin() != null) {
-		//	mc.getTextureManager().bindTexture(info.getLocationSkin());
-		//	drawModalRectWithCustomSizedTexture(-8, -8, 8, 8, 16, 16, 16, 16);
-		//} else {
 		mc.getTextureManager().bindTexture(new ResourceLocation("civRadar/icons/player.png"));
 		drawModalRectWithCustomSizedTexture(-8, -8, 0, 0, 16, 16, 16, 16);
-		//}
 		GL11.glTranslatef(-x -1, -y -1, 0.0F);
 		GL11.glScalef(2.0F, 2.0F, 2.0F);
 		GL11.glDisable(2896);
@@ -233,7 +231,8 @@ public class RenderHandler extends Gui {
 			if(config.isExtraPlayerInfo()) {
 				playerName += " (" + (int) mc.thePlayer.getDistanceToEntity(player) + "m)(Y" + (int) player.posY + ")";
 			}
-			drawCenteredString(mc.fontRendererObj, playerName, x + 8, y + 10, Color.WHITE.getRGB());
+			int yOffset = config.getNameLocation() == NameLocation.below ? 10 : -10;
+			drawCenteredString(mc.fontRendererObj, playerName, x + 8, y + yOffset, Color.WHITE.getRGB());
 			GL11.glScalef(2.0F, 2.0F, 2.0F);
 			GL11.glPopMatrix();
 		}
@@ -255,7 +254,58 @@ public class RenderHandler extends Gui {
 		GL11.glPopMatrix();
 	}
 	
-	private void renderWaypoint(Waypoint point) {
-
+	private void renderWaypoint(Waypoint point, RenderWorldLastEvent event) {
+		String name = point.getName();
+		Color c = point.getColor();
+		float partialTickTime = event.partialTicks;
+		double distance = point.getDistance();
+		if(distance <= config.getMaxWaypointDistance() || config.getMaxWaypointDistance() < 0) {
+			FontRenderer fr = mc.fontRendererObj;
+			Tessellator tess = Tessellator.getInstance();
+			WorldRenderer wr = tess.getWorldRenderer();
+			RenderManager rm = mc.getRenderManager();
+			
+			float playerX = (float) (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTickTime);
+			float playerY = (float) (mc.thePlayer.lastTickPosY + (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTickTime);
+			float playerZ = (float) (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTickTime);
+			
+			float displayX = (float)point.getX() - playerX;
+			float displayY = (float)point.getY() + 1.3f - playerY;
+			float displayZ = (float)point.getZ() - playerZ;
+			
+			float scale = (float) (Math.max(2, distance /5) * 0.0185f);
+			
+			GL11.glColor4f(1f, 1f, 1f, 1f);
+			GL11.glPushMatrix();
+			GL11.glTranslatef(displayX, displayY, displayZ);
+			GL11.glRotatef(-rm.playerViewY, 0.0F, 1.0F, 0.0F);
+			GL11.glRotatef(rm.playerViewX, 1.0F, 0.0F, 0.0F);
+			GL11.glScalef(-scale, -scale, scale);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDepthMask(false);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			
+			name += " (" + (int)distance + "m)";
+			int width = fr.getStringWidth(name);
+			int height = 10;
+			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			wr.startDrawingQuads();
+			int stringMiddle = width / 2;
+			wr.setColorRGBA_F(c.getRed() / 255.0F, c.getGreen() / 255.0F, c.getBlue() / 255.0F, config.getWaypointOpcaity());
+			wr.addVertex(-stringMiddle - 1, -1, 0.0D);
+			wr.addVertex(-stringMiddle - 1, 1 + height, 0.0D);
+			wr.addVertex(stringMiddle + 1, 1 + height, 0.0D);
+			wr.addVertex(stringMiddle + 1,  -1, 0.0D);
+			tess.draw();
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			
+			fr.drawString(name, -width / 2, 1, Color.WHITE.getRGB());
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GL11.glDepthMask(true);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glPopMatrix();
+		}
 	}
 }

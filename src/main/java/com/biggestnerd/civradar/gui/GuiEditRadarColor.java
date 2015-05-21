@@ -60,6 +60,9 @@ public class GuiEditRadarColor extends GuiScreen {
 	}
 	
 	public void updateScreen() {
+		redSlider.updateDisplayString();
+		greenSlider.updateDisplayString();
+		blueSlider.updateDisplayString();
 		float red = redSlider.getCurrentValue();
 		float green = greenSlider.getCurrentValue();
 		float blue = blueSlider.getCurrentValue();
@@ -67,7 +70,7 @@ public class GuiEditRadarColor extends GuiScreen {
 		CivRadar.instance.saveConfig();
 	}
 	
-	public void drawScreen(int i, int j, int k) {
+	public void drawScreen(int i, int j, float k) {
 		drawDefaultBackground();
 		drawCenteredString(this.fontRendererObj, "Edit Radar Color", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());
 		super.drawScreen(i, j, k);

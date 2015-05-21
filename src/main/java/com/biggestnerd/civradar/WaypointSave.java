@@ -1,5 +1,6 @@
 package com.biggestnerd.civradar;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,10 +11,13 @@ import com.google.gson.GsonBuilder;
 
 public class WaypointSave {
 
+	private String world;
 	private ArrayList<Waypoint> waypoints;
 	
-	public WaypointSave() {
+	public WaypointSave(String world) {
+		this.world = world;
 		waypoints = new ArrayList<Waypoint>();
+		waypoints.add(new Waypoint(0, 0, 0, "0,0", Color.BLACK, false));
 	}
 	
 	public ArrayList<Waypoint> getWaypoints() {
@@ -21,6 +25,21 @@ public class WaypointSave {
 			waypoints = new ArrayList<Waypoint>();
 		}
 		return waypoints;
+	}
+	
+	public void addWaypoint(Waypoint point) {
+		if(waypoints == null) {
+			waypoints = new ArrayList<Waypoint>();
+		}
+		waypoints.add(point);
+	}
+	
+	public void setEnabled(Waypoint point, boolean enabled) {
+		for(Waypoint w : waypoints) {
+			if(w.equals(point)) {
+				w.setEnabled(enabled);
+			}
+		}
 	}
 	
 	public void save(File file) {
@@ -36,8 +55,12 @@ public class WaypointSave {
 		}
 	}
 	
-	public static WaypointSave load(File file) throws Exception {
+	public static WaypointSave load(File file) {
 		Gson gson = new Gson();
-		return (WaypointSave) gson.fromJson(new FileReader(file), WaypointSave.class);
+		try {
+			return (WaypointSave) gson.fromJson(new FileReader(file), WaypointSave.class);
+		} catch (Exception e) {
+			return new WaypointSave(CivRadar.currentServer);
+		}
 	}
 }

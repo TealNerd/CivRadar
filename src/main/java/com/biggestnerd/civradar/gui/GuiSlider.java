@@ -21,8 +21,6 @@ public class GuiSlider extends GuiButton {
 		this.sliderValue = currentValue;
 		this.name = name;
 		this.width = 200;
-		
-		updateDisplayString();
 	}
 	public int getHoverState(boolean par1) {
 		return 0;
@@ -37,7 +35,6 @@ public class GuiSlider extends GuiButton {
 				} else if (this.sliderValue > maxValue) {
 					this.sliderValue = maxValue;
 				}
-				updateDisplayString();
 			}
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			drawTexturedModalRect(this.xPosition + (int) ((this.sliderValue - minValue) * (this.width - 8)), this.yPosition, 0, 66, 4, 20);
@@ -53,7 +50,6 @@ public class GuiSlider extends GuiButton {
 			} else if (this.sliderValue > maxValue) {
 				this.sliderValue = maxValue;
 			}
-			updateDisplayString();
 			this.dragging = true;
 			return true;
 		}
@@ -65,7 +61,11 @@ public class GuiSlider extends GuiButton {
 		CivRadar.instance.saveConfig();
 	}
 
-	private void updateDisplayString() {
+	public void setDisplayString(String string) {
+		this.displayString = (this.name + ": " + string);
+	}
+	
+	public void updateDisplayString() {
 		this.displayString = (this.name + ": " + sliderValue);
 	}
 	

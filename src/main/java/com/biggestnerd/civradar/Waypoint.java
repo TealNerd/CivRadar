@@ -6,19 +6,20 @@ import net.minecraft.client.Minecraft;
 
 public class Waypoint {
 
-	private int x, y, z;
-	private Color c;
+	private double x, y, z;
+	private Color color;
 	private String name;
-	private String worldName;
+	private int dimension;
 	private boolean enabled;
 	
-	public Waypoint(int x, int y, int z, String name, Color c) {
-		this.x = x;
-		this.z = z;
+	public Waypoint(int x, int y, int z, String name, Color c, boolean enabled) {
+		this.x = x + 0.5D;
+		this.z = z + 0.5D;
 		this.y = y;
 		this.name = name;
-		this.c = c;
-		this.worldName = Minecraft.getMinecraft().theWorld.getWorldInfo().getWorldName();
+		this.color = c;
+		this.dimension = Minecraft.getMinecraft().theWorld.provider.getDimensionId();
+		this.enabled = enabled;
 	}
 	
 	public boolean isEnabled() {
@@ -29,16 +30,16 @@ public class Waypoint {
 		this.enabled = enabled;
 	}
 	
-	public String getWorldName() {
-		return worldName;
+	public int getDimension() {
+		return dimension;
 	}
 	
 	public Color getColor() {
-		return c;
+		return color;
 	}
 	
 	public void setColor(Color c) {
-		this.c = c;
+		this.color = c;
 	}
 	
 	public String getName() {
@@ -49,7 +50,7 @@ public class Waypoint {
 		this.name = name;
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
@@ -57,7 +58,7 @@ public class Waypoint {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
@@ -65,7 +66,7 @@ public class Waypoint {
 		this.y = y;
 	}
 
-	public int getZ() {
+	public double getZ() {
 		return z;
 	}
 
@@ -73,13 +74,17 @@ public class Waypoint {
 		this.z = z;
 	}
 	
-	public int getDistance() {
-		int px = (int) Minecraft.getMinecraft().thePlayer.posX;
-		int py = (int) Minecraft.getMinecraft().thePlayer.posY;
-		int pz = (int) Minecraft.getMinecraft().thePlayer.posZ;
+	public double getDistance() {
+		double px = Minecraft.getMinecraft().thePlayer.posX;
+		double py = Minecraft.getMinecraft().thePlayer.posY;
+		double pz = Minecraft.getMinecraft().thePlayer.posZ;
 		double dx = Math.pow((px - x), 2);
 		double dy = Math.pow((py - y), 2);
 		double dz = Math.pow((pz - z), 2);
-		return (int) Math.sqrt(dx + dy + dz);
+		return Math.sqrt(dx + dy + dz);
+	}
+	
+	public boolean equals(Waypoint p) {
+		return x == p.getX() && y == p.getY() && z == p.getZ() && name.equals(p.getName()) && dimension == p.getDimension();
 	}
 }

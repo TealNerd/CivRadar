@@ -1,8 +1,10 @@
 package com.biggestnerd.civradar;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -12,19 +14,20 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 
+import org.apache.commons.io.FileUtils;
 import org.lwjgl.input.Keyboard;
 
 import com.biggestnerd.civradar.gui.GuiAddWaypoint;
 import com.biggestnerd.civradar.gui.GuiRadarOptions;
-import com.biggestnerd.civradar.gui.GuiRepositionRadar;
 
 @Mod(modid=CivRadar.MODID, name=CivRadar.MODNAME, version=CivRadar.VERSION)
 public class CivRadar {
 	public final static String MODID = "civradar";
 	public final static String MODNAME = "CivRadar";
-	public final static String VERSION = "beta-1.0.7";
+	public final static String VERSION = "beta-1.2.0";
 	private RenderHandler renderHandler;
 	private Config radarConfig;
 	private File configFile;
@@ -34,16 +37,28 @@ public class CivRadar {
 	public static CivRadar instance;
 	private WaypointSave currentWaypoints;
 	private File saveFile;
+	public static String currentServer = "";
+	public static File waypointDir;
+	private File radarDir;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		mc = Minecraft.getMinecraft();
 		instance = this;
-		File configDir = event.getModConfigurationDirectory();
-		if(!configDir.isDirectory()) {
-			configDir.mkdir();
+		File oldConfig = new File(event.getModConfigurationDirectory(), "civRadar.json");
+		File radarDir = new File(mc.mcDataDir, "/civradar/");
+		if(!radarDir.isDirectory()) {
+			radarDir.mkdir();
 		}
-		configFile = new File(configDir, "civRadar.json");
+		configFile = new File(radarDir, "config.json");
+		if(oldConfig.exists()) {
+			try {
+				FileUtils.copyFile(oldConfig, configFile);
+				oldConfig.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		if(!configFile.isFile()) {
 			try {
 				configFile.createNewFile();
@@ -60,6 +75,11 @@ public class CivRadar {
 			radarConfig.save(configFile);
 		}
 		renderHandler = new RenderHandler();
+		
+		waypointDir = new File(radarDir, "/waypoints/");
+		if(!waypointDir.isDirectory()) {
+			waypointDir.mkdir();
+		}
 		FMLCommonHandler.instance().bus().register(renderHandler);
 		MinecraftForge.EVENT_BUS.register(renderHandler);
 		FMLCommonHandler.instance().bus().register(this);
@@ -77,32 +97,42 @@ public class CivRadar {
 		}
 	}
 	
-	//@SubscribeEvent
-	public void connectToServer(ClientConnectedToServerEvent event) {
-		File waypointsFile = new File(mc.mcDataDir, "/waypoints/");
-		if(!waypointsFile.isDirectory()) {
-			waypointsFile.mkdir();
+	@SubscribeEvent
+	public void onTick(ClientTickEvent event) {
+		if(mc.theWorld != null) {
+			if(mc.isSingleplayer()) {
+				String worldName = mc.getIntegratedServer().getWorldName();
+				if(worldName == null) {
+					return;
+				}
+				if(!currentServer.equals(worldName)) {
+					loadWaypoints(new File(waypointDir, worldName + ".points"));
+				}
+			} else if (!currentServer.equals(mc.getCurrentServerData().serverIP)) {
+				currentServer = mc.getCurrentServerData().serverIP;
+				loadWaypoints(new File(waypointDir, currentServer + ".points"));
+			}
 		}
-		if(mc.getCurrentServerData() == null) {
-			return;
-		}
-		String ip = mc.getCurrentServerData().serverIP;
-		saveFile = new File(waypointsFile, ip + ".json");
+	}
+	
+	@SubscribeEvent
+	public void onDisconnect(ClientDisconnectionFromServerEvent event) {
+		currentServer = null;
+	}
+	
+	public void loadWaypoints(File saveFile) {
 		if(!saveFile.isFile()) {
 			try {
 				saveFile.createNewFile();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			currentWaypoints = new WaypointSave();
+			currentWaypoints = new WaypointSave(currentServer);
 			currentWaypoints.save(saveFile);
 		} else {
-			try {
-				currentWaypoints.load(saveFile);
-			} catch (Exception e) {
-				currentWaypoints = new WaypointSave();
-			}
+			currentWaypoints = WaypointSave.load(saveFile);
 			currentWaypoints.save(saveFile);
+			this.saveFile = saveFile;
 		}
 	}
 	

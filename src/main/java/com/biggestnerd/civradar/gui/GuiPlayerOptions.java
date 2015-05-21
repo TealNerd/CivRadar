@@ -18,6 +18,7 @@ public class GuiPlayerOptions extends GuiScreen {
 	private Config config;
 	private GuiButton playerNamesButton;
 	private GuiButton playerInfoButton;
+	private GuiButton playerNamePosButton;
 	
 	public GuiPlayerOptions(GuiScreen parent) {
 		this.parent = parent;
@@ -30,7 +31,8 @@ public class GuiPlayerOptions extends GuiScreen {
 		this.buttonList.clear();
 		this.buttonList.add(playerNamesButton = new GuiButton(0, this.width / 2 - 100, this.height / 4 - 20, "Player Names: " + (config.isPlayerNames() ? "Enabled" : "Disabled")));
 		this.buttonList.add(playerInfoButton = new GuiButton(1, this.width / 2 - 100, this.height / 4 + 2, "Position Info: " + (config.isExtraPlayerInfo() ? "Enabled" : "Disabled")));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 24, "Done"));
+		this.buttonList.add(playerNamePosButton = new GuiButton(3, this.width / 2 - 100, this.height / 4 + 24, "Player Name Location: " + config.getNameLocation().toString()));
+		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 46, "Done"));
 	}
 	
 	public void actionPerformed(GuiButton button) {
@@ -44,6 +46,9 @@ public class GuiPlayerOptions extends GuiScreen {
 			if(button.id == 2) {
 				mc.displayGuiScreen(parent);
 			}
+			if(button.id == 3) {
+				config.switchNameLocation();
+			}
 			CivRadar.instance.saveConfig();
 		}
 	}
@@ -55,9 +60,10 @@ public class GuiPlayerOptions extends GuiScreen {
 	public void updateScreen() {
 		playerNamesButton.displayString = "Player Names: " + (config.isPlayerNames() ? "Enabled" : "Disabled");
 		playerInfoButton.displayString = "Position Info: " + (config.isExtraPlayerInfo() ? "Enabled" : "Disabled");
+		playerNamePosButton.displayString = "Player Name Location: " + config.getNameLocation().toString();
 	}
 	
-	public void drawScreen(int i, int j, int k) {
+	public void drawScreen(int i, int j, float k) {
 		drawDefaultBackground();
 		mc.fontRendererObj.drawString("Player names:", this.width / 2 - 50, this.height / 4 - 20, Color.WHITE.getRGB());
 		drawCenteredString(this.fontRendererObj, "Player Options", this.width / 2, this.height / 4 - 40, Color.WHITE.getRGB());

@@ -1,13 +1,11 @@
 package com.biggestnerd.civradar.gui;
 
 import java.awt.Color;
-import java.io.IOException;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import com.biggestnerd.civradar.CivRadar;
 import com.biggestnerd.civradar.Config;
@@ -25,8 +23,6 @@ public class GuiRepositionRadar extends GuiScreen {
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, 40, "Use the arrow keys to reposition"));
-		((GuiButton)this.buttonList.get(0)).enabled = false;
 		this.buttonList.add(new GuiButton(1, this.width / 2 + 1, 90, 100, 20, "Snap top right"));
 		this.buttonList.add(new GuiButton(2, this.width / 2 - 101, 90, 100, 20, "Snap top left"));
 		this.buttonList.add(new GuiButton(3, this.width / 2 - 101, 112, 100, 20, "Snap bottom left"));
@@ -64,7 +60,7 @@ public class GuiRepositionRadar extends GuiScreen {
 		}
 		CivRadar.instance.saveConfig();
 	}
-	
+
 	public void updateScreen() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
 			config.setRadarX(config.getRadarX() - 1);
@@ -81,8 +77,8 @@ public class GuiRepositionRadar extends GuiScreen {
 		CivRadar.instance.saveConfig();
 	}
 	
-	public void drawScreen(int i, int j, int k) {
-		drawDefaultBackground();
+	public void drawScreen(int i, int j, float k) {
+		drawCenteredString(mc.fontRendererObj, "Use arrow keys to reposition radar", this.width / 2, 80, Color.WHITE.getRGB());
 		super.drawScreen(i, j, k);
 	}
 
