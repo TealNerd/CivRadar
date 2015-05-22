@@ -1,6 +1,7 @@
 package com.biggestnerd.civradar;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -17,9 +18,12 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -36,6 +40,11 @@ public class RenderHandler extends Gui {
 	private double pingDelay = 63.0D;
 	private List entityList;
 	private float radarScale;
+	ArrayList<String> inRangePlayers;
+	
+	public RenderHandler() {
+		inRangePlayers = new ArrayList<String>();
+	}
 	
 	@SubscribeEvent
 	public void renderRadar(RenderGameOverlayEvent event) {
@@ -54,6 +63,18 @@ public class RenderHandler extends Gui {
 			}
 			pingDelay -= 1.0D;
 			entityList = mc.theWorld.loadedEntityList;
+			ArrayList<String> newInRangePlayers = new ArrayList();
+			for(Object o : entityList) {
+				if(o instanceof EntityOtherPlayerMP) {
+					newInRangePlayers.add(((EntityOtherPlayerMP)o).getName());
+				}
+			}
+			ArrayList<String> temp = (ArrayList)newInRangePlayers.clone();
+			newInRangePlayers.removeAll(inRangePlayers);
+			for(String name : newInRangePlayers) {	
+				mc.theWorld.playSound(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, "minecraft:note.pling", config.getPingVolume(), 1.0F, false);
+			}
+			inRangePlayers = temp;
 		}
 	}
 	

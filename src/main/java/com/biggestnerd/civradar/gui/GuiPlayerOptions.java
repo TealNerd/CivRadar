@@ -19,6 +19,7 @@ public class GuiPlayerOptions extends GuiScreen {
 	private GuiButton playerNamesButton;
 	private GuiButton playerInfoButton;
 	private GuiButton playerNamePosButton;
+	private GuiSlider pingVolumeSlider;
 	
 	public GuiPlayerOptions(GuiScreen parent) {
 		this.parent = parent;
@@ -32,7 +33,8 @@ public class GuiPlayerOptions extends GuiScreen {
 		this.buttonList.add(playerNamesButton = new GuiButton(0, this.width / 2 - 100, this.height / 4 - 20, "Player Names: " + (config.isPlayerNames() ? "Enabled" : "Disabled")));
 		this.buttonList.add(playerInfoButton = new GuiButton(1, this.width / 2 - 100, this.height / 4 + 2, "Position Info: " + (config.isExtraPlayerInfo() ? "Enabled" : "Disabled")));
 		this.buttonList.add(playerNamePosButton = new GuiButton(3, this.width / 2 - 100, this.height / 4 + 24, "Player Name Location: " + config.getNameLocation().toString()));
-		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 46, "Done"));
+		this.buttonList.add(pingVolumeSlider = new GuiSlider(4, this.width / 2 - 100, this.height / 4 + 46, 1.0F, 0.0F, "Ping Volume", config.getPingVolume()));
+		this.buttonList.add(new GuiButton(2, this.width / 2 - 100, this.height / 4 + 68, "Done"));
 	}
 	
 	public void actionPerformed(GuiButton button) {
@@ -61,6 +63,11 @@ public class GuiPlayerOptions extends GuiScreen {
 		playerNamesButton.displayString = "Player Names: " + (config.isPlayerNames() ? "Enabled" : "Disabled");
 		playerInfoButton.displayString = "Position Info: " + (config.isExtraPlayerInfo() ? "Enabled" : "Disabled");
 		playerNamePosButton.displayString = "Player Name Location: " + config.getNameLocation().toString();
+		if(pingVolumeSlider.getCurrentValue() == 0.0F) {
+			pingVolumeSlider.setDisplayString("off");
+		} else {
+			pingVolumeSlider.updateDisplayString();
+		}
 	}
 	
 	public void drawScreen(int i, int j, float k) {

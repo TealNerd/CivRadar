@@ -60,6 +60,7 @@ public class Config {
 	private float radarScale = 1.0F;
 	public enum NameLocation {above,below};
 	private NameLocation nameLocation = NameLocation.below;
+	private float pingVolume = 0.0F;
 	
 	public Config() {
 		mobs = new ArrayList<Entity>(Arrays.asList(new Entity[]{
@@ -154,6 +155,14 @@ public class Config {
 	
 	public boolean isExtraPlayerInfo() {
 		return extraPlayerInfo;
+	}
+	
+	public float getPingVolume() {
+		return pingVolume;
+	}
+	
+	public void setPingVolume(float pingVolume) {
+		this.pingVolume = pingVolume;
 	}
 	
 	public boolean isPlayerNames() {
