@@ -68,6 +68,8 @@ public class GuiPlayerOptions extends GuiScreen {
 		} else {
 			pingVolumeSlider.updateDisplayString();
 		}
+		config.setPingVolume(pingVolumeSlider.getCurrentValue());
+		CivRadar.instance.saveConfig();
 	}
 	
 	public void drawScreen(int i, int j, float k) {

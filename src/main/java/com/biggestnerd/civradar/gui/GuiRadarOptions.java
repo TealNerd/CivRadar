@@ -17,6 +17,7 @@ public class GuiRadarOptions extends GuiScreen {
 	private GuiSlider scaleSlider;
 	private GuiButton coordToggle;
 	private GuiButton haxMode;
+	private GuiButton radarButton;
 	
 	public GuiRadarOptions(GuiScreen parentScreen) {
 		this.parentScreen = parentScreen;
@@ -25,16 +26,17 @@ public class GuiRadarOptions extends GuiScreen {
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
 		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 - 16, "Reposition Radar"));
-		this.buttonList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 8, "Edit Enabled Icons"));
-		this.buttonList.add(opacitySlider = new GuiSlider(3, this.width / 2 -100, this.height / 4 + 32, 1.0F, 0.0F, "Radar Opacity", CivRadar.instance.getConfig().getRadarOpacity()));
-		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 56, "Edit Radar Color"));
-		this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height /4 + 80, "Edit Player Options"));
-		this.buttonList.add(scaleSlider = new GuiSlider(6, this.width / 2 - 100, this.height / 4 + 104, 2.0F, 1.0F, "Radar Scale", CivRadar.instance.getConfig().getRadarScale()));
-		this.buttonList.add(coordToggle = new GuiButton(7, this.width / 2 - 100, this.height / 4 + 128, "Coordinates: "));
-		this.buttonList.add(new GuiButton(8, this.width / 2 - 100, this.height / 4 + 152, "Waypoints and Waypoint Options"));
-		this.buttonList.add(haxMode = new GuiButton(9, this.width / 2 - 100, this.height / 4 + 176, "Hax mode: "));
-		this.buttonList.add(new GuiButton(100, this.width / 2 - 100, this.height / 4 + 200, "Done"));
+		this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 - 16, 100, 20, "Reposition Radar"));
+		this.buttonList.add(new GuiButton(1, this.width / 2 + 1, this.height / 4 - 16, 100, 20, "Edit Enabled Icons"));
+		this.buttonList.add(opacitySlider = new GuiSlider(3, this.width / 2 -100, this.height / 4 + 8, 1.0F, 0.0F, "Radar Opacity", CivRadar.instance.getConfig().getRadarOpacity()));
+		this.buttonList.add(new GuiButton(4, this.width / 2 - 100, this.height / 4 + 32, 100, 20, "Edit Radar Color"));
+		this.buttonList.add(new GuiButton(5, this.width / 2 + 1, this.height /4 + 32, 100, 20, "Edit Player Options"));
+		this.buttonList.add(scaleSlider = new GuiSlider(6, this.width / 2 - 100, this.height / 4 + 56, 2.0F, 1.0F, "Radar Scale", CivRadar.instance.getConfig().getRadarScale()));
+		this.buttonList.add(coordToggle = new GuiButton(7, this.width / 2 - 100, this.height / 4 + 80, 100, 20, "Coordinates: "));
+		this.buttonList.add(new GuiButton(8, this.width / 2 + 1, this.height / 4 + 80, 100, 20, "Waypoint Shizz"));
+		this.buttonList.add(radarButton = new GuiButton(10, this.width / 2 - 100, this.height / 4 + 104, 100, 20, "Radar: "));
+		this.buttonList.add(haxMode = new GuiButton(9, this.width / 2 + 1, this.height / 4 + 104, 100, 20, "Hax mode: "));
+		this.buttonList.add(new GuiButton(100, this.width / 2 - 100, this.height / 4 + 128, "Done"));
 	}
 	
 	public void onGuiClosed() {
@@ -69,6 +71,10 @@ public class GuiRadarOptions extends GuiScreen {
 			CivRadar.instance.getConfig().setHaxMode(!CivRadar.instance.getConfig().isHaxMode());
 			CivRadar.instance.saveConfig();
 		}
+		if(id == 10) {
+			CivRadar.instance.getConfig().setEnabled(!CivRadar.instance.getConfig().isEnabled());
+			CivRadar.instance.saveConfig();
+		}
 		if(id == 100) {
 			mc.displayGuiScreen(parentScreen);
 		}
@@ -80,6 +86,7 @@ public class GuiRadarOptions extends GuiScreen {
 		config.setRadarScale(scaleSlider.getCurrentValue());
 		coordToggle.displayString = "Coordinates: " + (CivRadar.instance.getConfig().isRenderCoordinates() ? "On" : "Off");
 		haxMode.displayString = "Hax Mode: " + (CivRadar.instance.getConfig().isHaxMode() ? "On":"Off"); 
+		radarButton.displayString = "Radar: " + (CivRadar.instance.getConfig().isEnabled() ? "On" : "Off");
 		CivRadar.instance.saveConfig();
 		opacitySlider.updateDisplayString();
 		scaleSlider.updateDisplayString();
