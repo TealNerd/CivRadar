@@ -16,7 +16,7 @@ import com.biggestnerd.civradar.Waypoint;
 public class GuiWaypointList extends GuiScreen {
 	
 	private final GuiScreen parent;
-	private final ArrayList<Waypoint> waypointList;
+	private ArrayList<Waypoint> waypointList;
 	private int selected = -1;
 	private GuiButton enableButton;
 	private GuiButton disableButton;
@@ -25,7 +25,6 @@ public class GuiWaypointList extends GuiScreen {
 	
 	public GuiWaypointList(GuiScreen parent) {
 		this.parent = parent;
-		this.waypointList = CivRadar.instance.getWaypointSave().getWaypoints();
 	}
 	
 	public void initGui() {
@@ -33,12 +32,14 @@ public class GuiWaypointList extends GuiScreen {
 		this.buttonList.add(enableButton = new GuiButton(0, this.width / 2 - 100, this.height - 64, 64, 20, "Enable"));
 		this.buttonList.add(disableButton = new GuiButton(1, this.width / 2 - 32, this.height - 64, 64, 20, "Disable"));
 		this.buttonList.add(editButton = new GuiButton(2, this.width / 2 + 36, this.height - 64, 64, 20, "Edit"));
-		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height - 43, 99, 20, "Enable All"));
-		this.buttonList.add(new GuiButton(4, this.width / 2 + 1, this.height - 43, 99, 20, "Disable All"));
+		this.buttonList.add(new GuiButton(3, this.width / 2 - 100, this.height - 43, 64, 20, "Enable All"));
+		this.buttonList.add(new GuiButton(4, this.width / 2 - 32, this.height - 43, 64, 20, "Disable All"));
+		this.buttonList.add(new GuiButton(5, this.width / 2 + 36, this.height - 43, 64, 20, "Delete"));
 		this.buttonList.add(new GuiButton(100, this.width / 2 - 100, this.height - 22, "Done"));
 		this.waypointListContainer = new WaypointList(this.mc);
 		this.waypointListContainer.registerScrollButtons(4, 5);
 		editButton.enabled = false;
+		this.waypointList = CivRadar.instance.getWaypointSave().getWaypoints();
 	}
 	
 	public void handleMouseInput() throws IOException {
@@ -50,7 +51,6 @@ public class GuiWaypointList extends GuiScreen {
 		Waypoint point = waypointList.get(selected);
 		CivRadar.instance.getWaypointSave().setEnabled(point, enabled);
 		CivRadar.instance.saveWaypoints();
-		mc.displayGuiScreen(new GuiWaypointList(parent));
 	}
 	
 	private void enableOrDisableAllWaypoints(boolean enabled) {
@@ -58,7 +58,6 @@ public class GuiWaypointList extends GuiScreen {
 			CivRadar.instance.getWaypointSave().setEnabled(point, enabled);
 		}
 		CivRadar.instance.saveWaypoints();
-		mc.displayGuiScreen(new GuiWaypointList(parent));
 	}
 	
 	protected void actionPerformed(GuiButton button) throws IOException	 {
@@ -70,13 +69,17 @@ public class GuiWaypointList extends GuiScreen {
 				enableOrDisableSelectedWaypoint(false);
 			}
 			if(button.id == 2) {
-				mc.displayGuiScreen(new GuiEditWaypoint(waypointList.get(selected)));
+				mc.displayGuiScreen(new GuiEditWaypoint(waypointList.get(selected), this));
 			}
 			if(button.id == 3) {
 				enableOrDisableAllWaypoints(true);
 			}
 			if(button.id == 4) {
 				enableOrDisableAllWaypoints(false);
+			}
+			if(button.id == 5) {
+				CivRadar.instance.getWaypointSave().removeWaypoint(waypointList.get(selected));
+				CivRadar.instance.saveWaypoints();
 			}
 			if(button.id == 100) {
 				mc.displayGuiScreen(parent);
@@ -90,6 +93,10 @@ public class GuiWaypointList extends GuiScreen {
         this.drawCenteredString(this.fontRendererObj, "Waypoint List", this.width / 2, 20, 16777215);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
+	
+	public void updateScreen() {
+		this.waypointList = CivRadar.instance.getWaypointSave().getWaypoints();
+	}
 	
 	class WaypointList extends GuiSlot {
 		
@@ -124,15 +131,16 @@ public class GuiWaypointList extends GuiScreen {
 		protected void drawSlot(int entryId, int par2, int par3, int par4, int par5, int par6) {
 			Waypoint point = GuiWaypointList.this.waypointList.get(entryId);
 			GuiWaypointList.this.drawString(mc.fontRendererObj, point.getName(), par2 + 1, par3 + 1, Color.WHITE.getRGB());
-			String dimension = "";
-			switch(point.getDimension()) {
-			case 0: dimension = "overworld";
-			case -1: dimension = "nether";
-			case 1: dimension = "end";
-			default: dimension = "null";
+			String dimension = "null";
+			if(point.getDimension() == 0) {
+				dimension = "overworld";
+			} else if(point.getDimension() == -1) {
+				dimension = "nether";
+			} else if(point.getDimension() == 1) {
+				dimension = "nether";
 			}
 			String coords = "(" + (int)point.getX() + "," + (int)point.getY() + "," + (int)point.getZ() + ") Dimension: " + dimension;
-			GuiWaypointList.this.drawString(mc.fontRendererObj, coords, par2 + 1, par3 + 11, point.getColor().getRGB());
+			GuiWaypointList.this.drawString(mc.fontRendererObj, coords, par2 + 1, par3 + 13, point.getColor().getRGB());
 			GuiWaypointList.this.drawString(mc.fontRendererObj, point.isEnabled() ? "Enabled" : "Disabled", par2 + 215 - mc.fontRendererObj.getStringWidth("Disabled"), par3 + 1, point.isEnabled() ? Color.GREEN.getRGB() : Color.RED.getRGB());
 		}
 	}

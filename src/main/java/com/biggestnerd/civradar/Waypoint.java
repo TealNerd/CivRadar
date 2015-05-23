@@ -7,17 +7,19 @@ import net.minecraft.client.Minecraft;
 public class Waypoint {
 
 	private double x, y, z;
-	private Color color;
 	private String name;
 	private int dimension;
 	private boolean enabled;
+	private float red, green, blue;
 	
 	public Waypoint(int x, int y, int z, String name, Color c, boolean enabled) {
 		this.x = x + 0.5D;
 		this.z = z + 0.5D;
 		this.y = y;
 		this.name = name;
-		this.color = c;
+		this.red = c.getRed() / 255.0F;
+		this.green = c.getGreen() / 255.0F;
+		this.blue = c.getBlue() / 255.0F;
 		this.dimension = Minecraft.getMinecraft().theWorld.provider.getDimensionId();
 		this.enabled = enabled;
 	}
@@ -35,11 +37,25 @@ public class Waypoint {
 	}
 	
 	public Color getColor() {
-		return color;
+		return new Color(red, green, blue);
 	}
 	
 	public void setColor(Color c) {
-		this.color = c;
+		this.red = c.getRed() / 255.0F;
+		this.green = c.getGreen() / 255.0F;
+		this.blue = c.getBlue() / 255.0F;
+	}
+	
+	public float getRed() {
+		return red;
+	}
+	
+	public float getGreen() {
+		return green;
+	}
+	
+	public float getBlue() {
+		return blue;
 	}
 	
 	public String getName() {

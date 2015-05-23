@@ -11,11 +11,9 @@ import com.google.gson.GsonBuilder;
 
 public class WaypointSave {
 
-	private String world;
 	private ArrayList<Waypoint> waypoints;
 	
-	public WaypointSave(String world) {
-		this.world = world;
+	public WaypointSave() {
 		waypoints = new ArrayList<Waypoint>();
 		waypoints.add(new Waypoint(0, 0, 0, "0,0", Color.BLACK, false));
 	}
@@ -42,6 +40,14 @@ public class WaypointSave {
 		}
 	}
 	
+	public void removeWaypoint(Waypoint point) {
+		for(int i = 0; i < waypoints.size(); i++) {
+			if(waypoints.get(i).equals(point)) {
+				waypoints.remove(i);
+			}
+		}
+	}
+	
 	public void save(File file) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		try {
@@ -60,7 +66,7 @@ public class WaypointSave {
 		try {
 			return (WaypointSave) gson.fromJson(new FileReader(file), WaypointSave.class);
 		} catch (Exception e) {
-			return new WaypointSave(CivRadar.currentServer);
+			return new WaypointSave();
 		}
 	}
 }

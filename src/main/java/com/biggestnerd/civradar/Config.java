@@ -61,6 +61,7 @@ public class Config {
 	public enum NameLocation {above,below};
 	private NameLocation nameLocation = NameLocation.below;
 	private float pingVolume = 0.0F;
+	private boolean haxMode = false;
 	
 	public Config() {
 		mobs = new ArrayList<Entity>(Arrays.asList(new Entity[]{
@@ -210,6 +211,15 @@ public class Config {
 	public void setRadarY(int radarY) {
 		this.radarY = radarY;
 	}
+	
+	public boolean isHaxMode() {
+		return haxMode;
+	}
+	
+	public void setHaxMode(boolean haxMode) {
+		this.haxMode = haxMode;
+	}
+	
 	public int getMaxWaypointDistance() {
 		return maxWaypointDistance;
 	}

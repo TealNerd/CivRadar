@@ -27,7 +27,7 @@ import com.biggestnerd.civradar.gui.GuiRadarOptions;
 public class CivRadar {
 	public final static String MODID = "civradar";
 	public final static String MODNAME = "CivRadar";
-	public final static String VERSION = "beta-1.2.1";
+	public final static String VERSION = "beta-1.2.2";
 	private RenderHandler renderHandler;
 	private Config radarConfig;
 	private File configFile;
@@ -127,7 +127,7 @@ public class CivRadar {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			currentWaypoints = new WaypointSave(currentServer);
+			currentWaypoints = new WaypointSave();
 			currentWaypoints.save(saveFile);
 		} else {
 			currentWaypoints = WaypointSave.load(saveFile);
