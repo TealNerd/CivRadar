@@ -27,7 +27,7 @@ import com.biggestnerd.civradar.gui.GuiRadarOptions;
 public class CivRadar {
 	public final static String MODID = "civradar";
 	public final static String MODNAME = "CivRadar";
-	public final static String VERSION = "beta-1.2.3";
+	public final static String VERSION = "beta-1.2.4";
 	private RenderHandler renderHandler;
 	private Config radarConfig;
 	private File configFile;
@@ -106,18 +106,21 @@ public class CivRadar {
 					return;
 				}
 				if(!currentServer.equals(worldName)) {
+					currentServer = worldName;
 					loadWaypoints(new File(waypointDir, worldName + ".points"));
 				}
-			} else if (!currentServer.equals(mc.getCurrentServerData().serverIP)) {
-				currentServer = mc.getCurrentServerData().serverIP;
-				loadWaypoints(new File(waypointDir, currentServer + ".points"));
+			} else if (mc.getCurrentServerData() != null) {
+				if(!currentServer.equals(mc.getCurrentServerData().serverIP)) {
+					currentServer = mc.getCurrentServerData().serverIP;
+					loadWaypoints(new File(waypointDir, currentServer + ".points"));
+				}
 			}
 		}
 	}
 	
 	@SubscribeEvent
 	public void onDisconnect(ClientDisconnectionFromServerEvent event) {
-		currentServer = null;
+		currentServer = "";
 	}
 	
 	public void loadWaypoints(File saveFile) {
