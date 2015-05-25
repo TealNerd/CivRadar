@@ -279,7 +279,7 @@ public class RenderHandler extends Gui {
 		String name = point.getName();
 		Color c = point.getColor();
 		float partialTickTime = event.partialTicks;
-		double distance = point.getDistance();
+		double distance = point.getDistance(mc);
 		if(distance <= config.getMaxWaypointDistance() || config.getMaxWaypointDistance() < 0) {
 			FontRenderer fr = mc.fontRendererObj;
 			Tessellator tess = Tessellator.getInstance();

@@ -3,6 +3,7 @@ package com.biggestnerd.civradar;
 import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.MathHelper;
 
 public class Waypoint {
 
@@ -91,14 +92,11 @@ public class Waypoint {
 		this.z = z;
 	}
 	
-	public double getDistance() {
-		double px = Minecraft.getMinecraft().thePlayer.posX;
-		double py = Minecraft.getMinecraft().thePlayer.posY;
-		double pz = Minecraft.getMinecraft().thePlayer.posZ;
-		double dx = Math.pow((px - x), 2);
-		double dy = Math.pow((py - y), 2);
-		double dz = Math.pow((pz - z), 2);
-		return Math.sqrt(dx + dy + dz);
+	public double getDistance(Minecraft mc) {
+		double d3 = x - mc.thePlayer.posX;
+        double d4 = y - mc.thePlayer.posY;
+        double d5 = z - mc.thePlayer.posZ;
+        return (double)MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
 	}
 	
 	public boolean equals(Waypoint p) {
