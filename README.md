@@ -1,6 +1,8 @@
 ## CivRadar (FML 1.8) [![Build Status](http://dydoisbutts.info:8080/job/CivRadar/badge/icon)](http://dydoisbutts.info:8080/job/CivRadar/)
 A radar mod for Civcraft
 
+All the gradle stuff is from [Lunatrius](https://github.com/Lunatrius/Schematica) so ty for that
+
 Installing and Using CivRadar
 ---
 1. Run Minecraft 1.8 at least once (not 1.8.x, just regular 1.8)
