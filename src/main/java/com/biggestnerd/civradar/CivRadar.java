@@ -80,6 +80,8 @@ public class CivRadar {
 		if(!waypointDir.isDirectory()) {
 			waypointDir.mkdir();
 		}
+		currentWaypoints = new WaypointSave();
+		currentWaypoints.convertZanWayPoint();
 		FMLCommonHandler.instance().bus().register(renderHandler);
 		MinecraftForge.EVENT_BUS.register(renderHandler);
 		FMLCommonHandler.instance().bus().register(this);
@@ -130,7 +132,6 @@ public class CivRadar {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			currentWaypoints = new WaypointSave();
 			currentWaypoints.save(saveFile);
 		} else {
 			currentWaypoints = WaypointSave.load(saveFile);

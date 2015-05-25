@@ -20,7 +20,8 @@ public class Waypoint {
 		this.red = c.getRed() / 255.0F;
 		this.green = c.getGreen() / 255.0F;
 		this.blue = c.getBlue() / 255.0F;
-		this.dimension = Minecraft.getMinecraft().theWorld.provider.getDimensionId();
+		if (Minecraft.getMinecraft().theWorld != null)
+			this.dimension = Minecraft.getMinecraft().theWorld.provider.getDimensionId();
 		this.enabled = enabled;
 	}
 	
@@ -102,5 +103,9 @@ public class Waypoint {
 	
 	public boolean equals(Waypoint p) {
 		return x == p.getX() && y == p.getY() && z == p.getZ() && name.equals(p.getName()) && dimension == p.getDimension();
+	}
+	
+	public void setDimension(int dimension){
+		this.dimension = dimension;
 	}
 }
