@@ -247,7 +247,7 @@ public class RenderHandler extends Gui {
 			GL11.glScalef(0.5F, 0.5F, 0.5F);
 			GL11.glTranslatef(x, y, 0.0F);
 			GL11.glRotatef(mc.thePlayer.rotationYaw, 0.0F, 0.0F, 1.0F);
-			GL11.glTranslatef(-x, -y, 0.0F);
+			GL11.glTranslatef(-x - 8, -y, 0.0F);
 			String playerName = player.getName();
 			if(config.isExtraPlayerInfo()) {
 				playerName += " (" + (int) mc.thePlayer.getDistanceToEntity(player) + "m)(Y" + (int) player.posY + ")";
