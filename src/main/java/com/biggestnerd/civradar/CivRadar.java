@@ -27,7 +27,7 @@ import com.biggestnerd.civradar.gui.GuiRadarOptions;
 public class CivRadar {
 	public final static String MODID = "civradar";
 	public final static String MODNAME = "CivRadar";
-	public final static String VERSION = "beta-1.2.5";
+	public final static String VERSION = "beta-1.2.8";
 	private RenderHandler renderHandler;
 	private Config radarConfig;
 	private File configFile;
